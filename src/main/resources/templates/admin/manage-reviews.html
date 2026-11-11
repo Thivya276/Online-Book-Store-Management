@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Manage reviews')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+<main class="container">
+<div th:replace="~{fragments :: flash}"></div>
+<nav th:replace="~{fragments :: adminnav}"></nav>
+<h1>Manage reviews</h1>
+<div class="wrap"><table>
+  <thead><tr><th>Book</th><th>Reviewer</th><th>Rating</th><th>Comment</th><th></th></tr></thead>
+  <tbody><tr th:each="r : ${reviews}"><td><a th:href="@{/books/{id}(id=${r.bookId})}" th:text="${r.bookId}"></a></td><td th:text="${r.userName}"></td>
+    <td class="stars" th:text="${'★'.repeat(r.rating)}"></td><td th:text="${r.comment}"></td>
+    <td><form th:action="@{/reviews/{id}/delete(id=${r.id})}" method="post" data-confirm="Delete this review?"><button class="btn bad sm">Delete</button></form></td></tr></tbody>
+</table></div>
+<p class="empty" th:if="${#lists.isEmpty(reviews)}">No reviews yet.</p>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

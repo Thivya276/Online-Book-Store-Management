@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Manage orders')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+<main class="container">
+<div th:replace="~{fragments :: flash}"></div>
+<nav th:replace="~{fragments :: adminnav}"></nav>
+<h1>Manage orders</h1>
+<div class="wrap"><table>
+  <thead><tr><th>Order</th><th>Customer</th><th>Date</th><th>Total</th><th>Status</th><th>Payment</th></tr></thead>
+  <tbody><tr th:each="o : ${orders}">
+    <td><a th:href="@{/orders/{id}(id=${o.id})}" th:text="${o.id}"></a></td><td th:text="${o.userName}"></td><td th:text="${o.date}"></td><td th:text="${'$' + #numbers.formatDecimal(o.total,1,2)}"></td>
+    <td>
+      <form th:if="${o.status != 'Cancelled'}" th:action="@{/admin/orders/{id}/status(id=${o.id})}" method="post" class="inline">
+        <select name="status" aria-label="Order status"><option th:each="st : ${statuses}" th:value="${st}" th:text="${st}" th:selected="${st == o.status}"></option></select>
+        <button class="btn sm">Update</button></form>
+      <th:block th:if="${o.status == 'Cancelled'}"><span th:replace="~{fragments :: status('Cancelled')}"></span></th:block>
+    </td><td th:text="${o.paymentMethod} + ': ' + ${o.paymentStatus}"></td></tr></tbody>
+</table></div>
+<p class="empty" th:if="${#lists.isEmpty(orders)}">No orders yet.</p>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

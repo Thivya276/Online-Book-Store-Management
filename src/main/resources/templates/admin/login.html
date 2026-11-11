@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Admin log in')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+<main class="container">
+<div th:replace="~{fragments :: flash}"></div>
+<h1>Admin log in</h1>
+<form method="post" th:action="@{/admin/login}" class="form card" data-validate>
+  <label>Username<input name="username" required autocomplete="username"></label>
+  <label>Password<input name="password" type="password" required autocomplete="current-password"></label>
+  <div class="actions"><button class="btn">Log in</button></div>
+</form>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

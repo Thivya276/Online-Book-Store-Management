@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Manage users')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+<main class="container">
+<div th:replace="~{fragments :: flash}"></div>
+<nav th:replace="~{fragments :: adminnav}"></nav>
+<h1>Manage users</h1>
+<div class="wrap"><table>
+  <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Address</th><th></th></tr></thead>
+  <tbody><tr th:each="u : ${users}"><td th:text="${u.id}"></td><td th:text="${u.name}"></td><td th:text="${u.email}"></td><td th:text="${u.address}"></td>
+    <td><form th:action="@{/admin/users/{id}/delete(id=${u.id})}" method="post" data-confirm="Delete this user account?"><button class="btn bad sm">Delete</button></form></td></tr></tbody>
+</table></div>
+<p class="empty" th:if="${#lists.isEmpty(users)}">No customers have registered yet.</p>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>
