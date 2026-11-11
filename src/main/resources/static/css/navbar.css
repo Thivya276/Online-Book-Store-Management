@@ -1,0 +1,6 @@
+.navbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px 20px;padding:12px 18px;background:#14213d;color:#fff}
+.navbar a{color:#fff;text-decoration:none}.brand{display:flex;align-items:center;gap:10px;font:italic 500 22px 'Newsreader',Georgia,serif}
+.links{display:flex;gap:16px;flex-wrap:wrap;align-items:center}.links a:hover{text-decoration:underline}
+.links .pill{background:#3cc4c6;color:#06202a;padding:5px 14px;border-radius:99px;font-weight:600}
+.subnav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.subnav a{padding:6px 14px;border:1px solid var(--line);border-radius:99px;text-decoration:none;color:var(--ink);background:var(--card)}
+.subnav a:hover{border-color:var(--acc)}

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf" th:attr="content=${csrfToken}">
+  <title th:text="${title} + ' | Marginalia Books'">Marginalia Books</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&family=Newsreader:ital,wght@0,500;1,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <link rel="stylesheet" th:href="@{/css/navbar.css}">
+  <link rel="stylesheet" th:href="@{/css/forms.css}">
+  <link rel="stylesheet" th:if="${home}" th:href="@{/css/home.css}">
+  <script th:src="@{/js/common.js}" defer></script>
+  <script th:src="@{/js/validation.js}" defer></script>
+  <script th:if="${home}" th:src="@{/js/home.js}" defer></script>
+</head>
+<body>
+<nav th:fragment="navbar" class="navbar">
+  <a class="brand" th:href="@{/}"><img th:src="@{/images/logo.png}" alt="" width="28" height="28"><span>Marginalia Books</span></a>
+  <div class="links">
+    <a th:href="@{/books}">Books</a>
+    <a th:href="@{/orders/new}">Cart (<span th:text="${session.cart != null ? #maps.size(session.cart) : 0}">0</span>)</a>
+    <th:block th:if="${session.userId != null}">
+      <a th:href="@{/orders}">My orders</a>
+      <a th:href="@{/profile}" th:text="${session.userName}">Account</a>
+      <a th:href="@{/logout}">Log out</a>
+    </th:block>
+    <th:block th:if="${session.userId == null and session.adminId == null}">
+      <a th:href="@{/login}">Log in</a>
+      <a class="pill" th:href="@{/register}">Sign up</a>
+    </th:block>
+    <th:block th:if="${session.adminId != null}">
+      <a th:href="@{/admin}">Admin</a>
+      <a th:href="@{/admin/logout}">Admin log out</a>
+    </th:block>
+  </div>
+</nav>
+<nav th:fragment="adminnav" class="subnav">
+  <a th:href="@{/admin}">Dashboard</a><a th:href="@{/admin/books}">Books</a><a th:href="@{/admin/users}">Users</a>
+  <a th:href="@{/admin/orders}">Orders</a><a th:href="@{/admin/reviews}">Reviews</a><a th:href="@{/admin/password}">Password</a>
+</nav>
+<div th:fragment="flash">
+  <p class="flash ok" th:if="${msg}" th:text="${msg}"></p>
+  <p class="flash err" th:if="${error}" th:text="${error}"></p>
+</div>
+<footer th:fragment="footer" class="footer">Marginalia Books. A small online bookstore built with Spring Boot.</footer>
+<span th:fragment="stock(n)" th:class="${n == 0 ? 'tag out' : (n le 5 ? 'tag low' : 'tag ok')}"
+      th:text="${n == 0 ? 'Out of stock' : (n le 5 ? 'Only ' + n + ' left' : 'In stock')}"></span>
+<span th:fragment="status(s)" th:class="'tag st-' + ${s}" th:text="${s}"></span>
+<article th:fragment="bookCard(b)" class="card book">
+  <a th:href="@{/books/{id}(id=${b.id})}" class="cover" th:style="|background:hsl(${#strings.length(b.title) * 47 % 360} 45% 30%)|"><span th:text="${b.title}"></span></a>
+  <div class="meta">
+    <a th:href="@{/books/{id}(id=${b.id})}" class="title" th:text="${b.title}"></a>
+    <span class="muted" th:text="${b.author} + ', ' + ${b.genre}"></span>
+  </div>
+  <div class="buy">
+    <strong th:text="${'$' + #numbers.formatDecimal(b.price,1,2)}"></strong>
+    <span th:replace="~{fragments :: stock(${b.stock})}"></span>
+  </div>
+  <form th:if="${b.stock gt 0}" th:action="@{/cart/add}" method="post">
+    <input type="hidden" name="bookId" th:value="${b.id}">
+    <button class="btn full">Add to cart</button>
+  </form>
+</article>
+<article th:fragment="reviewItem(r)" class="review">
+  <div class="rh"><strong th:text="${r.userName}"></strong>
+    <span class="stars" th:text="${'★'.repeat(r.rating) + '☆'.repeat(5 - r.rating)}"></span>
+    <span class="muted" th:text="${r.date}"></span></div>
+  <p th:text="${r.comment}"></p>
+  <div class="actions">
+    <a class="btn ghost sm" th:if="${session.userId != null and session.userId == r.userId}" th:href="@{/reviews/{id}/edit(id=${r.id})}">Edit</a>
+    <form th:if="${session.adminId != null or (session.userId != null and session.userId == r.userId)}" th:action="@{/reviews/{id}/delete(id=${r.id})}" method="post" data-confirm="Delete this review?">
+      <button class="btn bad sm">Delete</button></form>
+  </div>
+</article>
+</body>
+</html>

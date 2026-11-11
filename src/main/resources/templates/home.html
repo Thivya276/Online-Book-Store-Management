@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Home')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+
+<div class="container home-flash" th:if="${msg != null or error != null}">
+  <div th:replace="~{fragments :: flash}"></div>
+</div>
+
+<!-- Hero: search plus a shelf of spines. Hover, focus or tap a spine to preview that book. -->
+<section class="home-hero">
+  <div class="hero-inner">
+    <h1>Find the book you’ll underline.</h1>
+    <p class="lede">A small shop with a short shelf. Pull a spine to preview it, read what other readers noted, and have it delivered to your door.</p>
+    <form th:action="@{/books}" method="get" class="searchbar hero-search">
+      <input name="q" placeholder="Search by title, author or genre" aria-label="Search books">
+      <button class="btn">Search</button>
+    </form>
+    <p class="hero-links">
+      <span th:text="${bookCount} + (${bookCount == 1} ? ' book' : ' books') + ' on the shelf, ' + ${#lists.size(genreTiles)} + (${#lists.size(genreTiles) == 1} ? ' genre, ' : ' genres, ') + ${inStockCount} + ' in stock.'"></span>
+      <a th:href="@{/books}">Browse all books</a>
+    </p>
+
+    <div class="shelf-stage" th:unless="${#lists.isEmpty(shelf)}">
+      <div class="shelf-wrap">
+        <div class="shelf" id="shelf" role="group" aria-label="Books on the shelf">
+          <a class="spine" th:each="b, s : ${shelf}"
+             th:href="@{/books/{id}(id=${b.id})}"
+             th:classappend="${s.first} ? 'active'"
+             th:aria-current="${s.first} ? 'true'"
+             th:style="|--h:${#strings.length(b.title) * 47 % 360};--ht:${180 + #strings.length(b.title) * 13 % 90}px;--w:${52 + #strings.length(b.author) * 7 % 26}px;--i:${s.index}|"
+             th:attr="data-id=${b.id},data-title=${b.title},data-author=${b.author},data-genre=${b.genre},data-price=${'$' + #numbers.formatDecimal(b.price,1,2)},data-stock=${b.stock},data-desc=${b.description},aria-label=${b.title + ' by ' + b.author}">
+            <span th:text="${b.title}"></span>
+          </a>
+        </div>
+        <div class="board"></div>
+      </div>
+
+      <div class="shelf-panel" id="shelfPanel" aria-live="polite" th:with="f=${shelf[0]}">
+        <p class="sp-tags">
+          <span class="tag sp-genre" data-f="genre" th:text="${f.genre}"></span>
+          <span data-f="stock" th:class="${f.stock == 0 ? 'tag out' : (f.stock le 5 ? 'tag low' : 'tag ok')}"
+                th:text="${f.stock == 0 ? 'Out of stock' : (f.stock le 5 ? 'Only ' + f.stock + ' left' : 'In stock')}"></span>
+        </p>
+        <h2 data-f="title" th:text="${f.title}"></h2>
+        <p class="sp-author" data-f="author" th:text="'by ' + ${f.author}"></p>
+        <p class="sp-desc" data-f="desc" th:text="${f.description}"></p>
+        <div class="sp-buy">
+          <span class="sp-price" data-f="price" th:text="${'$' + #numbers.formatDecimal(f.price,1,2)}"></span>
+        </div>
+        <div class="sp-actions">
+          <form th:action="@{/cart/add}" method="post" data-f="form" th:hidden="${f.stock le 0}">
+            <input type="hidden" name="bookId" data-f="bookId" th:value="${f.id}">
+            <button class="btn">Add to cart</button>
+          </form>
+          <a class="btn ghost" data-f="link" th:href="@{/books/{id}(id=${f.id})}">View details</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<main class="home-main">
+
+  <!-- Genres -->
+  <section class="home-sec" th:unless="${#lists.isEmpty(genreTiles)}">
+    <div class="sec-head"><h2>Browse by genre</h2></div>
+    <div class="genres">
+      <a class="genre" th:each="g : ${genreTiles}" th:href="@{/books(genre=${g.name})}" th:style="|--h:${g.hue}|">
+        <b th:text="${g.name}"></b>
+        <span class="muted" th:text="${g.count} + (${g.count == 1} ? ' book' : ' books')"></span>
+      </a>
+    </div>
+  </section>
+
+  <!-- Newest arrivals -->
+  <section class="home-sec" th:unless="${#lists.isEmpty(featured)}">
+    <div class="sec-head">
+      <h2>New on the shelves</h2>
+      <a th:href="@{/books}">See all books</a>
+    </div>
+    <div class="grid"><th:block th:each="b : ${featured}"><article th:replace="~{fragments :: bookCard(${b})}"></article></th:block></div>
+  </section>
+
+  <!-- Low stock -->
+  <section class="home-sec" th:unless="${#lists.isEmpty(lastCopies)}">
+    <div class="sec-head">
+      <h2>Last copies</h2>
+      <span class="muted">Five or fewer left. Once they’re gone, they’re gone.</span>
+    </div>
+    <div class="fast-list">
+      <article class="fast" th:each="b : ${lastCopies}" th:style="|--h:${#strings.length(b.title) * 47 % 360}|">
+        <span class="swatch" aria-hidden="true"></span>
+        <div class="info">
+          <a class="title" th:href="@{/books/{id}(id=${b.id})}" th:text="${b.title}"></a>
+          <span class="muted" th:text="${b.author}"></span>
+          <span th:replace="~{fragments :: stock(${b.stock})}"></span>
+        </div>
+        <div class="end">
+          <strong th:text="${'$' + #numbers.formatDecimal(b.price,1,2)}"></strong>
+          <form th:action="@{/cart/add}" method="post">
+            <input type="hidden" name="bookId" th:value="${b.id}">
+            <button class="btn sm">Add to cart</button>
+          </form>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Reader notes -->
+  <section class="home-sec" th:unless="${#lists.isEmpty(notes)}">
+    <div class="sec-head"><h2>What readers noted</h2></div>
+    <div class="notes">
+      <blockquote class="note" th:each="n : ${notes}">
+        <p><mark th:text="${n.review.comment}"></mark></p>
+        <footer>
+          <span class="stars" th:text="${'★'.repeat(n.review.rating) + '☆'.repeat(5 - n.review.rating)}"></span>
+          <span th:text="${n.review.userName} + ' on '"></span><a th:href="@{/books/{id}(id=${n.book.id})}" th:text="${n.book.title}"></a>
+        </footer>
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- How ordering works -->
+  <section class="home-sec">
+    <div class="sec-head"><h2>How ordering works</h2></div>
+    <ol class="steps">
+      <li><b>1</b><h3>Choose your books</h3><p>Search, filter by genre, and add what you like to your cart.</p></li>
+      <li><b>2</b><h3>Pick how to pay</h3><p>Cash on delivery works today. UPI and card run in demo mode.</p></li>
+      <li><b>3</b><h3>Follow your order</h3><p>Check its status under My orders. Pending orders can be cancelled, and the copies go back on the shelf.</p></li>
+    </ol>
+  </section>
+
+  <!-- Sign-up prompt for visitors who are not logged in -->
+  <section class="join" th:if="${session.userId == null and session.adminId == null}">
+    <div>
+      <h2>Keep your own margin notes</h2>
+      <p>Make a free account to place orders, track them, and review the books you read.</p>
+    </div>
+    <div class="join-actions">
+      <a class="btn" th:href="@{/register}">Sign up</a>
+      <a class="btn ghost" th:href="@{/login}">Log in</a>
+    </div>
+  </section>
+
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>
