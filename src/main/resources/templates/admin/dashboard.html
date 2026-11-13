@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Dashboard')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+<main class="container">
+<div th:replace="~{fragments :: flash}"></div>
+<nav th:replace="~{fragments :: adminnav}"></nav>
+<h1>Dashboard</h1>
+<p class="flash err" th:if="${defaultPw}">You are still using the default admin password. <a th:href="@{/admin/password}">Change it now</a>.</p>
+<div class="stats">
+  <div class="stat"><b th:text="${'$' + #numbers.formatDecimal(revenue,1,2)}"></b><span>Revenue</span></div>
+  <div class="stat"><b th:text="${orderCount}"></b><span>Orders</span></div>
+  <div class="stat"><b th:text="${pending}"></b><span>Pending orders</span></div>
+  <div class="stat"><b th:text="${bookCount}"></b><span>Titles</span></div>
+  <div class="stat"><b th:text="${userCount}"></b><span>Customers</span></div>
+</div>
+<h2>Needs restocking</h2>
+<p class="empty" th:if="${#lists.isEmpty(lowStock)}">Every title has more than 5 copies.</p>
+<div class="wrap" th:if="${!#lists.isEmpty(lowStock)}"><table><tbody>
+  <tr th:each="b : ${lowStock}"><td th:text="${b.title}"></td><td><span th:replace="~{fragments :: stock(${b.stock})}"></span></td>
+  <td><a class="btn ghost sm" th:href="@{/books/{id}/edit(id=${b.id})}">Update stock</a></td></tr>
+</tbody></table></div>
+<h2>Recent orders</h2>
+<p class="empty" th:if="${#lists.isEmpty(recent)}">No orders yet.</p>
+<div class="wrap" th:if="${!#lists.isEmpty(recent)}"><table><tbody>
+  <tr th:each="o : ${recent}"><td><a th:href="@{/orders/{id}(id=${o.id})}" th:text="${o.id}"></a></td><td th:text="${o.userName}"></td><td th:text="${o.date}"></td>
+  <td><span th:replace="~{fragments :: status(${o.status})}"></span></td><td th:text="${'$' + #numbers.formatDecimal(o.total,1,2)}"></td></tr>
+</tbody></table></div>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>
