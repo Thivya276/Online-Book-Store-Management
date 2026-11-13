@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Profile')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+<main class="container">
+<div th:replace="~{fragments :: flash}"></div>
+<h1>Your profile</h1>
+<form method="post" th:action="@{/profile}" class="form card" data-validate>
+  <label>Email<input th:value="${user.email}" readonly></label>
+  <label>Full name<input name="name" th:value="${user.name}" required maxlength="60"></label>
+  <label>Shipping address<textarea name="address" rows="2" maxlength="200" th:text="${user.address}"></textarea></label>
+  <label>Phone<input name="phone" type="tel" th:value="${user.phone}" maxlength="20"></label>
+  <div class="actions"><button class="btn">Save profile</button><a th:href="@{/orders}">View my orders</a></div>
+</form>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>
