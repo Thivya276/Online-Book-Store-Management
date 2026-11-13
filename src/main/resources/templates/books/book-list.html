@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Books')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+<main class="container">
+<div th:replace="~{fragments :: flash}"></div>
+<h1>All books</h1>
+<form th:action="@{/books}" method="get" class="searchbar">
+  <input name="q" th:value="${q}" placeholder="Search by title, author or genre" aria-label="Search books">
+  <select name="genre" aria-label="Genre">
+    <option value="">All genres</option>
+    <option th:each="g : ${genres}" th:value="${g}" th:text="${g}" th:selected="${g == genre}"></option>
+  </select>
+  <button class="btn">Search</button>
+</form>
+<p class="muted" th:text="${#lists.size(books)} + ' book(s) found'"></p>
+<div class="grid"><th:block th:each="b : ${books}"><article th:replace="~{fragments :: bookCard(${b})}"></article></th:block></div>
+<p class="empty" th:if="${#lists.isEmpty(books)}">No books match your search. Try another word or clear the genre.</p>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>
