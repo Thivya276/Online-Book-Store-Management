@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Reviews')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+<main class="container">
+<div th:replace="~{fragments :: flash}"></div>
+<h1 th:text="'Reviews for ' + ${book.title}"></h1>
+<p><a th:href="@{/books/{id}(id=${book.id})}">Back to the book</a> | <a th:href="@{/reviews/add/{id}(id=${book.id})}">Write a review</a></p>
+<p class="empty" th:if="${#lists.isEmpty(reviews)}">No reviews yet.</p>
+<th:block th:each="r : ${reviews}"><article th:replace="~{fragments :: reviewItem(${r})}"></article></th:block>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>
