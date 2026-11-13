@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('My orders')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+<main class="container">
+<div th:replace="~{fragments :: flash}"></div>
+<h1>My orders</h1>
+<p class="empty" th:if="${#lists.isEmpty(orders)}">You have not placed any orders yet. <a th:href="@{/books}">Find a book</a>.</p>
+<div class="wrap" th:if="${!#lists.isEmpty(orders)}"><table>
+  <thead><tr><th>Order</th><th>Date</th><th>Status</th><th>Total</th></tr></thead>
+  <tbody><tr th:each="o : ${orders}">
+    <td><a th:href="@{/orders/{id}(id=${o.id})}" th:text="${o.id}"></a></td><td th:text="${o.date}"></td>
+    <td><span th:replace="~{fragments :: status(${o.status})}"></span></td><td th:text="${'$' + #numbers.formatDecimal(o.total,1,2)}"></td>
+  </tr></tbody>
+</table></div>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

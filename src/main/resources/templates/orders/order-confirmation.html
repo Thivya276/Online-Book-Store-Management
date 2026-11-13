@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Order placed')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+<main class="container">
+<div th:replace="~{fragments :: flash}"></div>
+<section class="card pad center">
+  <h1>Thank you, your order is placed.</h1>
+  <p>Order <strong th:text="${order.id}"></strong> for <strong th:text="${'$' + #numbers.formatDecimal(order.total,1,2)}"></strong> will be shipped to:</p>
+  <p th:text="${order.address}"></p>
+  <p><a class="btn" th:href="@{/orders/{id}(id=${order.id})}">View order</a> <a class="btn ghost" th:href="@{/books}">Keep browsing</a></p>
+</section>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>
