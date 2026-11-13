@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Book details')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+<main class="container">
+<div th:replace="~{fragments :: flash}"></div>
+<div class="detail">
+  <div class="cover big" th:style="|background:hsl(${#strings.length(book.title) * 47 % 360} 45% 30%)|"><span th:text="${book.title}"></span></div>
+  <div>
+    <h1 th:text="${book.title}"></h1>
+    <p class="muted" th:text="'by ' + ${book.author} + ', ' + ${book.genre}"></p>
+    <p class="rating" th:if="${count gt 0}"><span class="stars" th:text="${'★'.repeat(avgRounded) + '☆'.repeat(5 - avgRounded)}"></span>
+      <span th:text="${#numbers.formatDecimal(avg,1,1)} + ' from ' + ${count} + ' review(s)'"></span></p>
+    <p class="price" th:text="${'$' + #numbers.formatDecimal(book.price,1,2)}"></p>
+    <p th:text="${book.description}"></p>
+    <p><span th:replace="~{fragments :: stock(${book.stock})}"></span></p>
+    <form th:if="${book.stock gt 0}" th:action="@{/cart/add}" method="post" class="inline">
+      <input type="hidden" name="bookId" th:value="${book.id}">
+      <label class="sr">Quantity</label><input type="number" name="qty" value="1" min="1" th:max="${book.stock}" class="qty">
+      <button class="btn">Add to cart</button>
+    </form>
+    <p th:if="${session.adminId != null}"><a class="btn ghost" th:href="@{/books/{id}/edit(id=${book.id})}">Edit this book</a></p>
+  </div>
+</div>
+<section>
+  <div class="row"><h2>Reviews</h2><a class="btn ghost" th:href="@{/reviews/add/{id}(id=${book.id})}">Write a review</a></div>
+  <p class="empty" th:if="${count == 0}">No reviews yet. Be the first to share what you thought.</p>
+  <th:block th:each="r : ${reviews}"><article th:replace="~{fragments :: reviewItem(${r})}"></article></th:block>
+  <p th:if="${count gt 3}"><a th:href="@{/reviews/book/{id}(id=${book.id})}" th:text="'See all ' + ${count} + ' reviews'"></a></p>
+</section>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

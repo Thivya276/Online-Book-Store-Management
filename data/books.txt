@@ -1,0 +1,8 @@
+B1|The Salt Road|Mira Okonjo|Fiction|16.5|24|A caravan family crosses the Sahel and learns what a promise is worth.
+B2|Small Machines|Dev Patel|Technology|29.0|3|How tiny embedded computers quietly run kitchens, cars and hospitals.
+B3|A Field Guide to Fog|Ingrid Sol|Nature|21.0|11|Fourteen kinds of fog, where to find them, and why they form.
+B4|Ledger of Lost Things|Tomas Rey|Mystery|14.25|0|An accountant audits a lost-property office and finds a missing person.
+B5|Bread, Slowly|Hana Aoki|Cooking|24.9|8|Sourdough, rye and flatbreads for people with ordinary kitchens.
+B6|Orbit and Ordinary Days|L. Brandt|Science|18.0|15|Life on the space station told through its routines, not its rockets.
+B7|The Quiet Cartographer|Elena Marsh|Fiction|15.75|19|A mapmaker is asked to draw a town that no longer exists.
+B8|Budget Like You Mean It|Jo Fairweather|Finance|19.5|5|A plain-language guide to tracking money without spreadsheets.
