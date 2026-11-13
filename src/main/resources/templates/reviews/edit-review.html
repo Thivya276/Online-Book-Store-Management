@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Edit review')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+<main class="container">
+<div th:replace="~{fragments :: flash}"></div>
+<h1 th:text="'Edit your review for ' + ${book.title}"></h1>
+<form method="post" th:action="@{/reviews/{id}/edit(id=${review.id})}" class="form card" data-validate>
+  <label>Rating<select name="rating" required><option value="">Choose</option><option value="5" th:selected="${review.rating == 5}">5 stars</option><option value="4" th:selected="${review.rating == 4}">4 stars</option><option value="3" th:selected="${review.rating == 3}">3 stars</option><option value="2" th:selected="${review.rating == 2}">2 stars</option><option value="1" th:selected="${review.rating == 1}">1 star</option></select></label>
+  <label>Your review<textarea name="comment" rows="4" maxlength="500" th:text="${review.comment}"></textarea></label>
+  <div class="actions"><button class="btn">Save review</button><a th:href="@{/books/{id}(id=${book.id})}">Cancel</a></div>
+</form>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>
